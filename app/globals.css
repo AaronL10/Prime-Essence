@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+:root {
+  --color-ink: #16130f;
+  --color-bone: #f2ead9;
+  --color-paper: #fbf8f2;
+  --color-amber: #b8853a;
+  --color-amber-light: #e4b76b;
+  --color-amber-ink: #7a5220;
+  --color-wine: #6b2036;
+  --color-sage: #4a5148;
+  --color-gold: #c9a227;
+
+  --font-display: var(--font-fraunces), serif;
+  --font-body: var(--font-manrope), sans-serif;
+  --font-mono: var(--font-space-mono), monospace;
+
+  --radius-card: 0.75rem;
+
+  --animate-fade-up: fade-up 0.8s ease-out both;
+  --animate-fill: fill-rise 1.4s cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fill-rise {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bone);
+}
+
+.link-underline {
+  background-image: linear-gradient(var(--color-gold), var(--color-gold));
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.35s ease;
+}
+
+.link-underline:hover,
+.link-underline:focus-visible {
+  background-size: 100% 1px;
+}
+
+.input {
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 15%, transparent);
+  background-color: var(--color-paper);
+  padding: 0.75rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--color-ink);
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  border-color: var(--color-amber);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
