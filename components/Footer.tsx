@@ -3,38 +3,41 @@ import Link from "next/link";
 const NAV_LINKS = [
   { href: "/", label: "Inicio" },
   { href: "/productos", label: "Productos" },
-  { href: "/#nosotros", label: "Sobre nosotros" },
-  { href: "/#contacto", label: "Contacto" },
+  { href: "/canje", label: "Canje" },
 ];
 
 const LEGAL_LINKS = [
-  { href: "/terminos", label: "Términos y condiciones" },
-  { href: "/privacidad", label: "Política de privacidad" },
+  { href: "/terminos", label: "Términos" },
+  { href: "/privacidad", label: "Privacidad" },
 ];
 
 export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer id="contacto" className="scroll-mt-24 border-t border-gold/25 bg-ink text-bone">
-      <div className="mx-auto max-w-6xl px-5 py-16 md:px-8">
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-4 md:gap-8">
+    <footer className="border-t border-neutral-200 bg-black text-white">
+      <div className="mx-auto max-w-7xl px-5 py-16 md:px-8">
+        <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 md:grid-cols-4 md:gap-8">
+          {/* Logo + descripción */}
           <div>
-            <div className="inline-flex rounded-2xl bg-white p-2.5">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="Prime Essence" className="h-12 w-auto" />
-            </div>
-            <p className="mt-4 max-w-[26ch] font-body text-sm leading-relaxed text-bone/65">
-              Casas de nicho y clásicos de autor, fraccionados a mano en decants desde 3ml. La misma fragancia, en tu tamaño.
+            <img src="/favic.png" alt="Prime Essence" className="h-10 w-auto" />
+            <p className="mt-4 max-w-[26ch] font-body text-sm leading-relaxed text-neutral-400">
+              Casas de nicho y clásicos de autor, fraccionados a mano en decants desde 3ml.
             </p>
           </div>
 
+          {/* Navegación */}
           <div>
-            <h3 className="font-body text-xs font-semibold uppercase tracking-[0.16em] text-bone/50">Navegación</h3>
+            <h3 className="font-body text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">
+              Navegación
+            </h3>
             <ul className="mt-4 space-y-3">
               {NAV_LINKS.map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className="font-body text-sm text-bone/75 transition-colors hover:text-amber-light">
+                  <Link
+                    href={link.href}
+                    className="font-body text-sm text-neutral-300 transition-colors hover:text-white"
+                  >
                     {link.label}
                   </Link>
                 </li>
@@ -42,53 +45,70 @@ export default function Footer() {
             </ul>
           </div>
 
+          {/* Contacto */}
           <div>
-            <h3 className="font-body text-xs font-semibold uppercase tracking-[0.16em] text-bone/50">Contacto</h3>
-            <ul className="mt-4 space-y-3 font-body text-sm text-bone/75">
+            <h3 className="font-body text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">
+              Contacto
+            </h3>
+            <ul className="mt-4 space-y-3 font-body text-sm text-neutral-300">
               <li>
-                <a href="mailto:hola@primeessence.com" className="transition-colors hover:text-amber-light">
+                <a href="mailto:hola@primeessence.com" className="transition-colors hover:text-white">
                   hola@primeessence.com
                 </a>
               </li>
               <li>
-                <a href="tel:+595210000000" className="transition-colors hover:text-amber-light">
+                <a href="tel:+595210000000" className="transition-colors hover:text-white">
                   +595 21 000 000
                 </a>
               </li>
-              <li className="text-bone/50">Asunción, Paraguay</li>
+              <li className="text-neutral-500">Asunción, Paraguay</li>
             </ul>
           </div>
 
+          {/* Redes */}
           <div>
-            <h3 className="font-body text-xs font-semibold uppercase tracking-[0.16em] text-bone/50">Seguinos</h3>
+            <h3 className="font-body text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">
+              Seguinos
+            </h3>
             <div className="mt-4 flex items-center gap-3">
-              <a href="https://wa.me/595210000000" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="flex h-10 w-10 items-center justify-center rounded-full border border-bone/20 text-bone/75 transition-colors hover:border-amber hover:text-amber-light">
+              <a
+                href="https://wa.me/595210000000"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-700 text-neutral-300 transition-all hover:border-white hover:text-white"
+              >
                 <WhatsAppIcon />
               </a>
-              <a href="#" aria-label="Instagram" className="flex h-10 w-10 items-center justify-center rounded-full border border-bone/20 text-bone/75 transition-colors hover:border-amber hover:text-amber-light">
+              <a
+                href="#"
+                aria-label="Instagram"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-700 text-neutral-300 transition-all hover:border-white hover:text-white"
+              >
                 <InstagramIcon />
               </a>
-              <a href="#" aria-label="TikTok" className="flex h-10 w-10 items-center justify-center rounded-full border border-bone/20 text-bone/75 transition-colors hover:border-amber hover:text-amber-light">
+              <a
+                href="#"
+                aria-label="TikTok"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-700 text-neutral-300 transition-all hover:border-white hover:text-white"
+              >
                 <TikTokIcon />
               </a>
             </div>
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col items-start justify-between gap-3 border-t border-bone/10 pt-6 font-mono text-[11px] text-bone/55 md:flex-row md:items-center">
-          <span>© {year} Prime Essence. Todos los derechos reservados.</span>
+        {/* Bottom bar */}
+        <div className="mt-14 flex flex-col items-start justify-between gap-4 border-t border-neutral-800 pt-6 font-mono text-[11px] text-neutral-500 md:flex-row md:items-center">
+          <span>© {year} Prime Essence</span>
           <div className="flex items-center gap-5">
             {LEGAL_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="transition-colors hover:text-amber-light"
-              >
+              <Link key={link.href} href={link.href} className="transition-colors hover:text-white">
                 {link.label}
               </Link>
             ))}
           </div>
-          <span>Hecho para quienes coleccionan aromas, no frascos.</span>
+          <span className="text-neutral-600">Hecho para quienes coleccionan aromas.</span>
         </div>
       </div>
     </footer>

@@ -44,7 +44,11 @@ export default function ProductForm({
     setValues((prev) => ({ ...prev, [key]: value }));
   }
 
-  function updateVariant(sizeMl: number, field: "price" | "stock", value: number) {
+  function updateVariant(
+    sizeMl: number,
+    field: "price" | "stock",
+    value: number
+  ) {
     setValues((prev) => ({
       ...prev,
       variants: prev.variants.map((v) =>

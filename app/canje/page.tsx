@@ -28,15 +28,15 @@ export default async function CanjePage() {
 
   return (
     <main>
-      <section className="border-b border-ink/10 bg-paper">
-        <div className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-20">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-amber-ink">
+      <section className="border-b border-neutral-200">
+        <div className="mx-auto max-w-6xl px-5 py-12 md:px-8 md:py-16">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-neutral-400">
             Canje de puntos
           </p>
-          <h1 className="mt-3 font-display text-4xl text-ink sm:text-5xl">
+          <h1 className="mt-2 font-display text-3xl text-black sm:text-4xl">
             Recompensas
           </h1>
-          <p className="mt-4 font-body text-sm leading-relaxed text-ink/60 sm:text-base">
+          <p className="mt-3 font-body text-sm text-neutral-500">
             {user
               ? `Tenés ${formatPoints(userPoints)} puntos disponibles.`
               : "Iniciá sesión para ver tus puntos y canjear recompensas."}
@@ -45,10 +45,10 @@ export default async function CanjePage() {
       </section>
 
       <section>
-        <div className="mx-auto max-w-6xl px-5 py-14 md:px-8">
+        <div className="mx-auto max-w-6xl px-5 py-10 md:px-8">
           {(rewards ?? []).length === 0 ? (
-            <p className="font-body text-sm text-ink/50">
-              Todavía no hay recompensas cargadas.
+            <p className="font-body text-sm text-neutral-400">
+              Próximamente nuevas recompensas.
             </p>
           ) : (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

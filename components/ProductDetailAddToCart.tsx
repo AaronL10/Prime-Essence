@@ -6,7 +6,7 @@ import { useCart } from "@/context/CartContext";
 import type { ProductVariant } from "@/lib/product-helpers";
 
 function formatPrice(price: number) {
-  return `$${price.toLocaleString("es-AR")}`;
+  return `Gs. ${price.toLocaleString("es-AR")}`;
 }
 
 interface ProductDetailAddToCartProps {
@@ -15,6 +15,7 @@ interface ProductDetailAddToCartProps {
   name: string;
   brand: string;
   image: string;
+  category: string;  // ← AGREGAR
   variants: ProductVariant[];
 }
 
@@ -61,16 +62,16 @@ export default function ProductDetailAddToCart({
         sizeMl: selectedVariant.sizeMl,
         price: selectedVariant.price,
         stock: selectedVariant.stock,
+        category,  // ← AGREGAR
       },
-      quantity
-    );
 
-    setAdded(true);
+
+      setAdded(true);
   }
 
   if (variants.length === 0) {
     return (
-      <p className="font-body text-sm text-ink/50">
+      <p className="font-body text-sm text-neutral-400">
         Este producto todavía no tiene tamaños cargados.
       </p>
     );
@@ -78,8 +79,9 @@ export default function ProductDetailAddToCart({
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Selector de tamaño */}
       <div>
-        <p className="font-body text-xs font-medium uppercase tracking-wide text-ink/50">
+        <p className="font-body text-xs font-medium uppercase tracking-wide text-neutral-400">
           Elegí el tamaño
         </p>
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -93,21 +95,21 @@ export default function ProductDetailAddToCart({
                 type="button"
                 disabled={outOfStock}
                 onClick={() => handleSelectSize(v.sizeMl)}
-                className={`flex flex-col items-center gap-1 rounded-2xl border px-3 py-3 transition-colors ${
+                className={`flex flex-col items-center gap-1 rounded-xl border-2 px-3 py-3 transition-all ${
                   isSelected
-                    ? "border-ink bg-ink text-bone"
+                    ? "border-black bg-black text-white"
                     : outOfStock
-                    ? "cursor-not-allowed border-ink/10 text-ink/30"
-                    : "border-ink/15 text-ink hover:border-amber"
+                    ? "cursor-not-allowed border-neutral-100 bg-neutral-50 text-neutral-300"
+                    : "border-neutral-200 text-black hover:border-black"
                 }`}
               >
-                <span className="font-mono text-sm">{v.sizeMl}ml</span>
-                <span className="font-mono text-xs opacity-75">
+                <span className="font-mono text-sm font-medium">{v.sizeMl}ml</span>
+                <span className="font-mono text-xs opacity-80">
                   {formatPrice(v.price)}
                 </span>
                 {outOfStock && (
                   <span className="font-mono text-[10px] uppercase tracking-wide">
-                    Sin stock
+                    Agotado
                   </span>
                 )}
               </button>
@@ -118,30 +120,35 @@ export default function ProductDetailAddToCart({
 
       {selectedVariant && (
         <>
-          <div className="flex items-center justify-between">
-            <span className="font-body text-sm text-ink/60">
+          {/* Precio y stock */}
+          <div className="flex items-end justify-between">
+            <div>
+              <p className="font-body text-xs text-neutral-400">Precio</p>
+              <p className="font-mono text-3xl font-medium text-black">
+                {formatPrice(selectedVariant.price * quantity)}
+              </p>
+            </div>
+            <p className="font-body text-sm text-neutral-500">
               {selectedVariant.stock > 0
                 ? selectedVariant.stock <= 3
                   ? `Últimas ${selectedVariant.stock} unidades`
-                  : "En stock"
+                  : `${selectedVariant.stock} en stock`
                 : "Sin stock"}
-            </span>
-            <span className="font-mono text-2xl text-ink">
-              {formatPrice(selectedVariant.price)}
-            </span>
+            </p>
           </div>
 
+          {/* Cantidad + botón */}
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3 rounded-full border border-ink/15">
+            <div className="flex items-center rounded-full border border-neutral-200">
               <button
                 type="button"
                 aria-label="Restar cantidad"
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                className="flex h-10 w-10 items-center justify-center text-ink/70 hover:text-ink"
+                className="flex h-12 w-12 items-center justify-center text-neutral-500 transition-colors hover:text-black"
               >
                 −
               </button>
-              <span className="w-6 text-center font-mono text-sm text-ink">
+              <span className="w-8 text-center font-mono text-sm text-black">
                 {quantity}
               </span>
               <button
@@ -151,7 +158,7 @@ export default function ProductDetailAddToCart({
                 onClick={() =>
                   setQuantity((q) => Math.min(selectedVariant.stock, q + 1))
                 }
-                className="flex h-10 w-10 items-center justify-center text-ink/70 hover:text-ink disabled:cursor-not-allowed disabled:text-ink/25"
+                className="flex h-12 w-12 items-center justify-center text-neutral-500 transition-colors hover:text-black disabled:cursor-not-allowed disabled:text-neutral-200"
               >
                 +
               </button>
@@ -161,23 +168,28 @@ export default function ProductDetailAddToCart({
               type="button"
               disabled={selectedVariant.stock === 0}
               onClick={handleAddToCart}
-              className="flex-1 rounded-full bg-ink py-3.5 font-body text-sm font-medium uppercase tracking-[0.1em] text-bone transition-colors hover:bg-amber hover:text-ink disabled:cursor-not-allowed disabled:bg-ink/20 disabled:text-ink/40"
+              className="flex-1 rounded-full bg-black py-4 font-body text-sm font-semibold uppercase tracking-[0.1em] text-white transition-all hover:bg-neutral-800 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-400"
             >
-              {selectedVariant.stock === 0 ? "Sin stock" : "Agregar al carrito"}
+              {selectedVariant.stock === 0
+                ? "Sin stock"
+                : added
+                ? "Agregado ✓"
+                : "Agregar al carrito"}
             </button>
           </div>
 
+          {/* Feedback de agregado */}
           {added && (
-            <div className="flex items-center justify-between rounded-card border border-sage/30 bg-sage/10 px-4 py-3">
-              <span className="font-body text-sm text-sage">
-                Agregado al carrito.
+            <div className="flex items-center justify-between rounded-xl border border-neutral-200 bg-neutral-50 px-5 py-4">
+              <span className="font-body text-sm text-neutral-600">
+                Agregado al carrito
               </span>
               <button
                 type="button"
                 onClick={() => router.push("/carrito")}
-                className="font-body text-sm font-medium text-sage underline underline-offset-4"
+                className="font-body text-sm font-semibold text-black underline underline-offset-4 hover:text-neutral-600"
               >
-                Ver carrito
+                Ver carrito →
               </button>
             </div>
           )}

@@ -146,7 +146,7 @@ export default async function PedidoPage({ params }: PageProps) {
           </div>
 
           <div className="mt-8 flex flex-wrap gap-4">
-            
+              <a
               href={whatsappHref}
               target="_blank"
               rel="noopener noreferrer"

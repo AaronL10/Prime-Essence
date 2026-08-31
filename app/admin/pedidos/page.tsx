@@ -10,7 +10,7 @@ export default async function AdminPedidosPage() {
 
   const { data: orders } = await supabase
     .from("orders")
-    .select("id, full_name, city, total, status, created_at")
+    .select("id, full_name, city, total, total_paid, status, created_at")
     .order("created_at", { ascending: false });
 
   return (
@@ -24,7 +24,8 @@ export default async function AdminPedidosPage() {
               <th className="px-4 py-3">Pedido</th>
               <th className="px-4 py-3">Cliente</th>
               <th className="px-4 py-3">Ciudad</th>
-              <th className="px-4 py-3">Total</th>
+              <th className="px-4 py-3">Subtotal</th>
+              <th className="px-4 py-3">A pagar</th>
               <th className="px-4 py-3">Estado</th>
               <th className="px-4 py-3"></th>
             </tr>
@@ -37,8 +38,11 @@ export default async function AdminPedidosPage() {
                 </td>
                 <td className="px-4 py-3">{order.full_name}</td>
                 <td className="px-4 py-3">{order.city}</td>
-                <td className="px-4 py-3 font-mono">
+                <td className="px-4 py-3 font-mono text-ink/50">
                   {formatPrice(order.total)}
+                </td>
+                <td className="px-4 py-3 font-mono">
+                  {formatPrice(order.total_paid)}
                 </td>
                 <td className="px-4 py-3">
                   <span className="rounded-full bg-amber/20 px-2.5 py-1 font-mono text-[11px] uppercase tracking-wide text-amber-ink">
@@ -57,7 +61,7 @@ export default async function AdminPedidosPage() {
             ))}
             {(orders ?? []).length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-6 text-center text-ink/40">
+                <td colSpan={7} className="px-4 py-6 text-center text-ink/40">
                   Todavía no hay pedidos.
                 </td>
               </tr>

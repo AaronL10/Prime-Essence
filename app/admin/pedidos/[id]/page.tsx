@@ -16,7 +16,9 @@ export default async function AdminPedidoDetailPage({ params }: PageProps) {
 
   const { data: order, error } = await supabase
     .from("orders")
-    .select("id, full_name, phone, address, city, notes, total, status, created_at")
+    .select(
+      "id, full_name, phone, address, city, notes, total, total_paid, points_used, discount_amount, status, created_at"
+    )
     .eq("id", id)
     .single();
 
@@ -53,11 +55,32 @@ export default async function AdminPedidoDetailPage({ params }: PageProps) {
             </li>
           ))}
         </ul>
-        <div className="mt-4 flex justify-between border-t border-ink/10 pt-4">
-          <span className="text-sm text-ink/60">Total</span>
-          <span className="font-mono text-lg text-ink">
-            {formatPrice(order.total)}
-          </span>
+
+        <div className="mt-4 flex flex-col gap-1.5 border-t border-ink/10 pt-4">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-ink/60">Subtotal</span>
+            <span className="font-mono text-ink">
+              {formatPrice(order.total)}
+            </span>
+          </div>
+          {order.points_used > 0 && (
+            <>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-ink/60">
+                  Puntos usados ({order.points_used})
+                </span>
+                <span className="font-mono text-sage">
+                  -{formatPrice(order.discount_amount)}
+                </span>
+              </div>
+            </>
+          )}
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-ink">Total a cobrar</span>
+            <span className="font-mono text-lg text-ink">
+              {formatPrice(order.total_paid)}
+            </span>
+          </div>
         </div>
       </div>
 

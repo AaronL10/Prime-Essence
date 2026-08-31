@@ -5,25 +5,16 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent, type ReactNode } from "react";
 import { useCart } from "@/context/CartContext";
 import { createOrder } from "@/app/checkout/actions";
-import {
-  formatPoints,
-  GS_PER_POINT,
-  POINTS_DISCOUNT_CAP_RATIO,
-} from "@/lib/points";
 
 function formatPrice(price: number) {
-  return `$${price.toLocaleString("es-AR")}`;
+  return `Gs. ${price.toLocaleString("es-AR")}`;
 }
 
 interface CheckoutFormProps {
   defaultName: string;
-  availablePoints: number;
 }
 
-export default function CheckoutForm({
-  defaultName,
-  availablePoints,
-}: CheckoutFormProps) {
+export default function CheckoutForm({ defaultName }: CheckoutFormProps) {
   const { cart, cartTotal, clearCart } = useCart();
   const router = useRouter();
 
@@ -32,22 +23,8 @@ export default function CheckoutForm({
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [notes, setNotes] = useState("");
-  const [pointsToUse, setPointsToUse] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const maxPointsByCap = Math.floor(
-    (cartTotal * POINTS_DISCOUNT_CAP_RATIO) / GS_PER_POINT
-  );
-  const maxPointsUsable = Math.max(0, Math.min(availablePoints, maxPointsByCap));
-
-  const discountAmount = pointsToUse * GS_PER_POINT;
-  const totalToPay = Math.max(cartTotal - discountAmount, 0);
-
-  function handlePointsChange(value: number) {
-    const clamped = Math.max(0, Math.min(value, maxPointsUsable));
-    setPointsToUse(clamped);
-  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -65,8 +42,7 @@ export default function CheckoutForm({
       cart.map((item) => ({
         variantId: item.id,
         quantity: item.quantity,
-      })),
-      pointsToUse
+      }))
     );
 
     setLoading(false);
@@ -82,9 +58,9 @@ export default function CheckoutForm({
 
   if (cart.length === 0) {
     return (
-      <p className="font-body text-sm text-ink/60">
+      <p className="font-body text-sm text-neutral-500">
         Tu carrito está vacío. Volvé a{" "}
-        <Link href="/productos" className="underline underline-offset-4">
+        <Link href="/productos" className="underline underline-offset-4 hover:text-black">
           productos
         </Link>{" "}
         para agregar algo antes de continuar.
@@ -93,7 +69,8 @@ export default function CheckoutForm({
   }
 
   return (
-    <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_320px]">
+    <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_340px]">
+      {/* Formulario */}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <Field label="Nombre y apellido">
           <input
@@ -114,7 +91,7 @@ export default function CheckoutForm({
             className="input"
             type="tel"
             autoComplete="tel"
-            placeholder="+54 9 11 ..."
+            placeholder="+595 981 000 000"
           />
         </Field>
 
@@ -149,67 +126,45 @@ export default function CheckoutForm({
           />
         </Field>
 
-        {error && <p className="font-body text-sm text-wine">{error}</p>}
+        {error && <p className="font-body text-sm text-neutral-600">{error}</p>}
 
         <button
           type="submit"
           disabled={loading}
-          className="mt-2 w-full rounded-full bg-ink py-3.5 font-body text-sm font-medium uppercase tracking-[0.1em] text-bone transition-colors hover:bg-amber hover:text-ink disabled:opacity-50"
+          className="mt-2 w-full rounded-full bg-black py-4 font-body text-sm font-semibold uppercase tracking-[0.1em] text-white transition-all hover:bg-neutral-800 disabled:opacity-50"
         >
           {loading ? "Confirmando..." : "Confirmar pedido"}
         </button>
       </form>
 
-      <aside className="h-fit rounded-card border border-ink/10 bg-paper p-6">
-        <h2 className="font-display text-xl text-ink">Tu pedido</h2>
-        <ul className="mt-4 flex flex-col gap-3">
+      {/* Resumen */}
+      <aside className="h-fit rounded-xl border border-neutral-200 bg-neutral-50 p-6 lg:p-8">
+        <h2 className="font-display text-xl text-black">Tu pedido</h2>
+        <ul className="mt-5 flex flex-col gap-3">
           {cart.map((item) => (
             <li key={item.id} className="flex justify-between gap-3 text-sm">
-              <span className="font-body text-ink/70">
+              <span className="font-body text-neutral-600">
                 {item.quantity}× {item.name} ({item.sizeMl}ml)
               </span>
-              <span className="font-mono text-ink">
+              <span className="font-mono text-black">
                 {formatPrice(item.price * item.quantity)}
               </span>
             </li>
           ))}
         </ul>
 
-        {maxPointsUsable > 0 && (
-          <div className="mt-5 border-t border-ink/10 pt-4">
-            <div className="flex items-center justify-between">
-              <span className="font-body text-xs uppercase tracking-wide text-ink/50">
-                Usar puntos (tenés {formatPoints(availablePoints)})
-              </span>
-              <button
-                type="button"
-                onClick={() => handlePointsChange(maxPointsUsable)}
-                className="font-body text-xs text-amber-ink underline underline-offset-4"
-              >
-                Usar máximo
-              </button>
-            </div>
-            <input
-              type="range"
-              min={0}
-              max={maxPointsUsable}
-              value={pointsToUse}
-              onChange={(e) => handlePointsChange(Number(e.target.value))}
-              className="mt-2 w-full accent-amber"
-            />
-            <div className="mt-1 flex items-center justify-between font-mono text-xs text-ink/60">
-              <span>{formatPoints(pointsToUse)} pts</span>
-              <span>-{formatPrice(discountAmount)}</span>
-            </div>
+        <div className="mt-5 border-t border-neutral-200 pt-5">
+          <div className="flex items-center justify-between">
+            <span className="font-body text-base font-medium text-black">Total</span>
+            <span className="font-mono text-2xl font-medium text-black">
+              {formatPrice(cartTotal)}
+            </span>
           </div>
-        )}
-
-        <div className="mt-5 flex items-center justify-between border-t border-ink/10 pt-4">
-          <span className="font-body text-sm text-ink/60">Total a pagar</span>
-          <span className="font-mono text-lg text-ink">
-            {formatPrice(totalToPay)}
-          </span>
         </div>
+
+        <p className="mt-3 font-body text-xs text-neutral-400">
+          Envío y forma de pago se coordinan por WhatsApp luego de confirmar el pedido.
+        </p>
       </aside>
     </div>
   );
@@ -218,7 +173,7 @@ export default function CheckoutForm({
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="flex flex-col gap-1.5">
-      <span className="font-body text-xs font-medium uppercase tracking-wide text-ink/50">
+      <span className="font-body text-xs font-medium uppercase tracking-wide text-neutral-400">
         {label}
       </span>
       {children}

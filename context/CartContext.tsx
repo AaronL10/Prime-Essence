@@ -1,15 +1,9 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  ReactNode,
-} from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, type ReactNode } from "react";
 
 export interface CartItem {
-  id: string; // id de la variante (tamaño) del producto
+  id: string;
   productId: string;
   slug: string;
   name: string;
@@ -19,98 +13,136 @@ export interface CartItem {
   price: number;
   stock: number;
   quantity: number;
+  category: string;
 }
 
-export type CartItemInput = Omit<CartItem, "quantity">;
+interface DecantDiscountInfo {
+  count: number;
+  rate: number;
+  amount: number;
+  message: string;
+}
 
 interface CartContextType {
   cart: CartItem[];
-  addToCart: (item: CartItemInput, quantity?: number) => void;
-  removeFromCart: (variantId: string) => void;
-  updateQuantity: (variantId: string, quantity: number) => void;
-  clearCart: () => void;
   cartCount: number;
   cartTotal: number;
+  decantDiscount: DecantDiscountInfo;
+  cartTotalWithDecantDiscount: number;
+  addToCart: (item: Omit<CartItem, "quantity">, quantity?: number) => void;
+  removeFromCart: (id: string) => void;
+  updateQuantity: (id: string, quantity: number) => void;
+  clearCart: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
+
+function getDecantDiscount(cart: CartItem[]): DecantDiscountInfo {
+  const decantCount = cart
+    .filter((item) => item.category === "decants")
+    .reduce((sum, item) => sum + item.quantity, 0);
+
+  let rate = 0;
+  let message = "";
+
+  if (decantCount === 1) {
+    rate = 0;
+    message = "Agregá 1 decant más y obtené 5% OFF.";
+  } else if (decantCount === 2) {
+    rate = 0.05;
+    message = "¡Ya tenés 5% OFF! Agregá 1 decant más para obtener 10% OFF.";
+  } else if (decantCount >= 3 && decantCount <= 4) {
+    rate = 0.1;
+    message = "¡Ya tenés 10% OFF! Llegá a 5 decants y obtené 15% OFF.";
+  } else if (decantCount >= 5) {
+    rate = 0.15;
+    message = "¡Excelente! Ya desbloqueaste 15% OFF en tus decants.";
+  }
+
+  const decantSubtotal = cart
+    .filter((item) => item.category === "decants")
+    .reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  const amount = Math.round(decantSubtotal * rate);
+
+  return { count: decantCount, rate, amount, message };
+}
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    const savedCart = localStorage.getItem("prime-essence-cart");
-
-    if (savedCart) {
-      try {
-        setCart(JSON.parse(savedCart));
-      } catch {
-        localStorage.removeItem("prime-essence-cart");
+    try {
+      const raw = localStorage.getItem("prime-essence-cart");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        // Migración: agregar category si no existe en items viejos
+        const migrated = parsed.map((item: any) => ({
+          ...item,
+          category: item.category || "decants",
+        }));
+        setCart(migrated);
       }
+    } catch {
+      /* ignore */
     }
-
     setLoaded(true);
   }, []);
 
   useEffect(() => {
-    if (!loaded) return;
-
-    localStorage.setItem("prime-essence-cart", JSON.stringify(cart));
+    if (loaded) {
+      localStorage.setItem("prime-essence-cart", JSON.stringify(cart));
+    }
   }, [cart, loaded]);
 
-  function addToCart(item: CartItemInput, quantity: number = 1) {
-    setCart((currentCart) => {
-      const existingItem = currentCart.find((i) => i.id === item.id);
+  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const decantDiscount = useMemo(() => getDecantDiscount(cart), [cart]);
+  const cartTotalWithDecantDiscount = cartTotal - decantDiscount.amount;
 
-      if (existingItem) {
-        return currentCart.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + quantity } : i
+  const addToCart = useCallback((item: Omit<CartItem, "quantity">, quantity = 1) => {
+    setCart((prev) => {
+      const existing = prev.find((i) => i.id === item.id);
+      if (existing) {
+        return prev.map((i) =>
+          i.id === item.id
+            ? { ...i, quantity: Math.min(i.stock, i.quantity + quantity) }
+            : i
         );
       }
-
-      return [...currentCart, { ...item, quantity }];
+      return [...prev, { ...item, quantity: Math.min(item.stock, quantity) }];
     });
-  }
+  }, []);
 
-  function removeFromCart(variantId: string) {
-    setCart((currentCart) => currentCart.filter((item) => item.id !== variantId));
-  }
+  const removeFromCart = useCallback((id: string) => {
+    setCart((prev) => prev.filter((i) => i.id !== id));
+  }, []);
 
-  function updateQuantity(variantId: string, quantity: number) {
-    if (quantity <= 0) {
-      removeFromCart(variantId);
-      return;
-    }
+  const updateQuantity = useCallback((id: string, quantity: number) => {
+    setCart((prev) => {
+      if (quantity <= 0) return prev.filter((i) => i.id !== id);
+      const item = prev.find((i) => i.id === id);
+      if (!item) return prev;
+      const safeQty = Math.min(item.stock, Math.max(1, quantity));
+      return prev.map((i) => (i.id === id ? { ...i, quantity: safeQty } : i));
+    });
+  }, []);
 
-    setCart((currentCart) =>
-      currentCart.map((item) =>
-        item.id === variantId ? { ...item, quantity } : item
-      )
-    );
-  }
-
-  function clearCart() {
-    setCart([]);
-  }
-
-  const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
-
-  const cartTotal = cart.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
+  const clearCart = useCallback(() => setCart([]), []);
 
   return (
     <CartContext.Provider
       value={{
         cart,
+        cartCount,
+        cartTotal,
+        decantDiscount,
+        cartTotalWithDecantDiscount,
         addToCart,
         removeFromCart,
         updateQuantity,
         clearCart,
-        cartCount,
-        cartTotal,
       }}
     >
       {children}
@@ -119,11 +151,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 }
 
 export function useCart() {
-  const context = useContext(CartContext);
-
-  if (!context) {
-    throw new Error("useCart debe utilizarse dentro de CartProvider");
-  }
-
-  return context;
+  const ctx = useContext(CartContext);
+  if (!ctx) throw new Error("useCart must be used within CartProvider");
+  return ctx;
 }

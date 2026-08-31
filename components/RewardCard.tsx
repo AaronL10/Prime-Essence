@@ -50,10 +50,9 @@ export default function RewardCard({
   }
 
   return (
-    <article className="flex flex-col overflow-hidden rounded-card border border-ink/10 bg-paper">
-      <div className="relative aspect-[4/3] overflow-hidden bg-ink/5">
+    <article className="flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white transition-all hover:border-black hover:shadow-lg">
+      <div className="relative aspect-[4/3] overflow-hidden bg-neutral-100">
         {image && !imgFailed ? (
-          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={image}
             alt={name}
@@ -61,30 +60,30 @@ export default function RewardCard({
             className="h-full w-full object-cover"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center font-display italic text-ink/30">
+          <div className="flex h-full w-full items-center justify-center font-display text-4xl italic text-neutral-200">
             {name.charAt(0)}
           </div>
         )}
       </div>
       <div className="flex flex-1 flex-col gap-2 p-5">
-        <h3 className="font-display text-lg text-ink">{name}</h3>
+        <h3 className="font-display text-lg text-black">{name}</h3>
         {description && (
-          <p className="line-clamp-2 font-body text-sm text-ink/60">
+          <p className="line-clamp-2 font-body text-sm text-neutral-500">
             {description}
           </p>
         )}
-        <p className="mt-auto font-mono text-lg text-amber-ink">
+        <p className="mt-auto font-mono text-lg font-medium text-black">
           {formatPoints(pointsCost)} pts
         </p>
 
         {done ? (
-          <p className="rounded-full bg-sage/15 py-2.5 text-center font-body text-[13px] text-sage">
+          <p className="rounded-full bg-neutral-100 py-2.5 text-center font-body text-[13px] text-neutral-600">
             ¡Canjeado! Revisá tu cuenta.
           </p>
         ) : !isLoggedIn ? (
           <Link
             href="/login?redirect=/canje"
-            className="rounded-full border border-ink px-4 py-2.5 text-center font-body text-[13px] uppercase tracking-[0.1em] text-ink transition-colors hover:bg-ink hover:text-bone"
+            className="rounded-full border border-neutral-200 px-4 py-2.5 text-center font-body text-[13px] font-semibold uppercase tracking-[0.1em] text-black transition-all hover:bg-black hover:text-white"
           >
             Iniciar sesión para canjear
           </Link>
@@ -93,7 +92,7 @@ export default function RewardCard({
             type="button"
             disabled={outOfStock || insufficientPoints || loading}
             onClick={handleRedeem}
-            className="rounded-full bg-ink py-2.5 font-body text-[13px] font-medium uppercase tracking-[0.12em] text-bone transition-colors hover:bg-amber hover:text-ink disabled:cursor-not-allowed disabled:bg-ink/20 disabled:text-ink/40"
+            className="rounded-full bg-black py-2.5 font-body text-[13px] font-semibold uppercase tracking-[0.12em] text-white transition-all hover:bg-neutral-800 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-400"
           >
             {outOfStock
               ? "Sin stock"
@@ -104,7 +103,7 @@ export default function RewardCard({
               : "Canjear"}
           </button>
         )}
-        {error && <p className="font-body text-xs text-wine">{error}</p>}
+        {error && <p className="font-body text-xs text-neutral-600">{error}</p>}
       </div>
     </article>
   );

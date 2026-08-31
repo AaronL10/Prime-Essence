@@ -18,34 +18,25 @@ export default async function CheckoutPage() {
     (user.user_metadata?.name as string | undefined) ??
     "";
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("points")
-    .eq("id", user.id)
-    .maybeSingle();
-
   return (
     <main>
-      <section className="border-b border-ink/10 bg-paper">
-        <div className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-20">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-amber-ink">
+      <section className="border-b border-neutral-200">
+        <div className="mx-auto max-w-6xl px-5 py-12 md:px-8 md:py-16">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-neutral-400">
             Checkout
           </p>
-          <h1 className="mt-3 font-display text-4xl text-ink sm:text-5xl">
+          <h1 className="mt-2 font-display text-3xl text-black sm:text-4xl">
             Datos de envío
           </h1>
-          <p className="mt-4 font-body text-sm leading-relaxed text-ink/60 sm:text-base">
+          <p className="mt-3 font-body text-sm text-neutral-500">
             Completá tus datos para confirmar el pedido.
           </p>
         </div>
       </section>
 
       <section>
-        <div className="mx-auto max-w-3xl px-5 py-14 md:px-8">
-          <CheckoutForm
-            defaultName={defaultName}
-            availablePoints={profile?.points ?? 0}
-          />
+        <div className="mx-auto max-w-3xl px-5 py-10 md:px-8">
+          <CheckoutForm defaultName={defaultName} />
         </div>
       </section>
     </main>

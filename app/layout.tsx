@@ -3,6 +3,7 @@ import { Fraunces, Manrope, Space_Mono } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import WelcomePopup from "@/components/WelcomePopup";
 import { createClient } from "@/lib/supabase/server";
 import { CartProvider } from "@/context/CartContext";
 import "./globals.css";
@@ -80,6 +81,7 @@ export default async function RootLayout({
           {children}
           <Footer />
           <WhatsAppButton />
+          <WelcomePopup user={sessionUser} />
         </CartProvider>
       </body>
     </html>

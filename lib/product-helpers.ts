@@ -6,6 +6,7 @@ export interface ProductVariant {
 }
 
 export interface Product {
+  [x: string]: any;
   id: string;
   slug: string;
   name: string;

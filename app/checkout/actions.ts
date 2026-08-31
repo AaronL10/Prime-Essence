@@ -1,7 +1,6 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { GS_PER_POINT, POINTS_DISCOUNT_CAP_RATIO } from "@/lib/points";
 
 export interface CheckoutCartItem {
   variantId: string;
@@ -20,8 +19,7 @@ type CreateOrderResult = { orderId: string } | { error: string };
 
 export async function createOrder(
   formData: CheckoutFormData,
-  items: CheckoutCartItem[],
-  pointsToUse: number = 0
+  items: CheckoutCartItem[]
 ): Promise<CreateOrderResult> {
   if (items.length === 0) {
     return { error: "El carrito está vacío." };
@@ -95,26 +93,6 @@ export async function createOrder(
 
   const total = verifiedItems.reduce((sum, item) => sum + item.subtotal, 0);
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("points")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  const availablePoints = profile?.points ?? 0;
-  const maxPointsByCap = Math.floor(
-    (total * POINTS_DISCOUNT_CAP_RATIO) / GS_PER_POINT
-  );
-  const requestedPoints = Math.max(0, Math.floor(pointsToUse));
-  const effectivePoints = Math.min(
-    requestedPoints,
-    availablePoints,
-    maxPointsByCap
-  );
-
-  const discountAmount = effectivePoints * GS_PER_POINT;
-  const totalPaid = Math.max(total - discountAmount, 0);
-
   const { data: order, error: orderError } = await supabase
     .from("orders")
     .insert({
@@ -126,9 +104,9 @@ export async function createOrder(
       notes: formData.notes || null,
       total,
       subtotal: total,
-      points_used: effectivePoints,
-      discount_amount: discountAmount,
-      total_paid: totalPaid,
+      points_used: 0,
+      discount_amount: 0,
+      total_paid: total,
     })
     .select("id")
     .single();
@@ -160,30 +138,6 @@ export async function createOrder(
       error:
         "El pedido se creó pero hubo un error al guardar los productos. Contactanos.",
     };
-  }
-
-  if (effectivePoints > 0) {
-    const { error: spendError } = await supabase.rpc("spend_own_points", {
-      p_amount: effectivePoints,
-      p_reason: "descuento",
-      p_order_id: order.id,
-    });
-
-    if (spendError) {
-      console.error("Error al descontar puntos:", spendError.message);
-
-      const { error: clearError } = await supabase.rpc(
-        "clear_order_points_discount",
-        { p_order_id: order.id }
-      );
-
-      if (clearError) {
-        console.error(
-          "Error al limpiar el descuento del pedido:",
-          clearError.message
-        );
-      }
-    }
   }
 
   return { orderId: order.id as string };

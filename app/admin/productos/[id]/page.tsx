@@ -35,7 +35,6 @@ export default async function EditarProductoPage({ params }: PageProps) {
     const existing = existingVariants.find((v) => v.size_ml === sizeMl);
     return existing
       ? {
-          id: existing.id,
           sizeMl: existing.size_ml,
           price: Number(existing.price),
           stock: existing.stock,

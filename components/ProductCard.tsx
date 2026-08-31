@@ -2,7 +2,15 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { getStartingPrice, isAnyVariantInStock, type ProductVariant } from "@/lib/product-helpers";
+import {
+  getStartingPrice,
+  isAnyVariantInStock,
+  type ProductVariant,
+} from "@/lib/product-helpers";
+
+function formatPrice(price: number) {
+  return `Gs. ${price.toLocaleString("es-AR")}`;
+}
 
 interface ProductCardProps {
   slug: string;
@@ -11,20 +19,6 @@ interface ProductCardProps {
   description: string;
   image: string;
   variants: ProductVariant[];
-}
-
-const ACCENTS = ["#FF2E93", "#7A1554", "#9AA0AC"] as const;
-
-function pickAccent(seed: string) {
-  const hash = Array.from(seed).reduce(
-    (acc, char) => acc + char.charCodeAt(0),
-    0
-  );
-  return ACCENTS[hash % ACCENTS.length];
-}
-
-function formatPrice(price: number) {
-  return `$${price.toLocaleString("es-AR")}`;
 }
 
 export default function ProductCard({
@@ -36,92 +30,92 @@ export default function ProductCard({
   variants,
 }: ProductCardProps) {
   const [imgFailed, setImgFailed] = useState(false);
-  const accent = pickAccent(brand + name);
   const inStock = isAnyVariantInStock(variants);
   const startingPrice = getStartingPrice(variants);
 
   return (
     <Link
       href={`/productos/${slug}`}
-      className="group flex flex-col overflow-hidden rounded-card border border-ink/10 bg-paper transition-all duration-300 hover:-translate-y-1 hover:border-amber/50 hover:shadow-xl hover:shadow-ink/10"
+      className="group flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white transition-all duration-300 hover:border-black hover:shadow-lg"
     >
-      <div className="relative aspect-[4/5] overflow-hidden bg-ink/5">
+      {/* Imagen */}
+      <div className="relative aspect-[4/5] overflow-hidden bg-neutral-100">
         {image && !imgFailed ? (
-          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={image}
-            alt={`${brand} ${name}`}
+            alt={`${brand} — ${name}`}
             loading="lazy"
             onError={() => setImgFailed(true)}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full object-contain p-4 transition-transform duration-700 group-hover:scale-105"
           />
         ) : (
-          <BottlePlaceholder color={accent} initial={brand.charAt(0)} />
+          <BottlePlaceholder initial={brand.charAt(0)} />
         )}
 
-        <span className="absolute left-3 top-3 rounded-full bg-ink/80 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-bone backdrop-blur-sm">
+        {/* Badge stock */}
+        <span
+          className={`absolute left-3 top-3 rounded-full px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-widest ${
+            inStock
+              ? "bg-black text-white"
+              : "border border-neutral-300 bg-white text-neutral-400"
+          }`}
+        >
           {inStock ? "En stock" : "Agotado"}
         </span>
       </div>
 
-      <div className="flex flex-1 flex-col gap-3 p-5">
+      {/* Info */}
+      <div className="flex flex-1 flex-col gap-2 p-4">
         <div>
-          <p className="font-body text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/45">
+          <p className="font-body text-[11px] font-semibold uppercase tracking-[0.16em] text-neutral-400">
             {brand}
           </p>
-          <h3 className="mt-1 font-display text-xl text-ink">{name}</h3>
+          <h3 className="mt-0.5 font-display text-lg leading-tight text-black">
+            {name}
+          </h3>
         </div>
 
-        <p className="line-clamp-2 flex-1 font-body text-sm leading-relaxed text-ink/60">
+        <p className="line-clamp-2 flex-1 font-body text-sm leading-relaxed text-neutral-500">
           {description}
         </p>
 
-        <div className="flex items-center justify-between gap-3 pt-1">
-          <span className="font-mono text-sm text-ink/50">Desde</span>
-          <span className="font-mono text-lg text-ink">
+        <div className="flex items-baseline justify-between gap-3 pt-2">
+          <span className="font-body text-xs text-neutral-400">Desde</span>
+          <span className="font-mono text-base font-medium text-black">
             {formatPrice(startingPrice)}
           </span>
         </div>
 
-        <span className="mt-1 w-full rounded-full bg-ink py-3 text-center font-body text-[13px] font-medium uppercase tracking-[0.12em] text-bone transition-colors duration-300 group-hover:bg-amber group-hover:text-ink">
-          Ver tamaños
+        <span className="mt-2 w-full rounded-full border border-neutral-200 py-2.5 text-center font-body text-[12px] font-semibold uppercase tracking-[0.1em] text-black transition-all duration-300 group-hover:bg-black group-hover:text-white">
+          Ver opciones
         </span>
       </div>
     </Link>
   );
 }
 
-function BottlePlaceholder({
-  color,
-  initial,
-}: {
-  color: string;
-  initial: string;
-}) {
+function BottlePlaceholder({ initial }: { initial: string }) {
   return (
-    <div
-      className="flex h-full w-full items-center justify-center"
-      style={{ backgroundColor: `${color}14` }}
-    >
-      <svg width="72" height="110" viewBox="0 0 72 110" fill="none">
-        <rect x="24" y="4" width="24" height="14" rx="3" fill={color} opacity="0.85" />
-        <rect x="18" y="18" width="36" height="10" rx="2" fill={color} opacity="0.5" />
+    <div className="flex h-full w-full items-center justify-center bg-neutral-100">
+      <svg width="64" height="96" viewBox="0 0 64 96" fill="none">
+        <rect x="20" y="4" width="24" height="12" rx="2" fill="#000000" opacity="0.15" />
+        <rect x="16" y="16" width="32" height="8" rx="2" fill="#000000" opacity="0.1" />
         <path
-          d="M14 32c0-2 2-4 4-4h36c2 0 4 2 4 4v64a10 10 0 0 1-10 10H24a10 10 0 0 1-10-10V32Z"
-          fill={color}
-          opacity="0.18"
-          stroke={color}
-          strokeWidth="1.5"
+          d="M12 28c0-1.5 1.5-3 3-3h34c1.5 0 3 1.5 3 3v56a8 8 0 0 1-8 8H20a8 8 0 0 1-8-8V28Z"
+          fill="#000000"
+          opacity="0.06"
+          stroke="#000000"
+          strokeWidth="1"
         />
         <text
-          x="36"
-          y="76"
+          x="32"
+          y="68"
           textAnchor="middle"
-          fontFamily="serif"
+          fontFamily="var(--font-fraunces), serif"
           fontStyle="italic"
-          fontSize="22"
-          fill={color}
-          opacity="0.7"
+          fontSize="20"
+          fill="#000000"
+          opacity="0.25"
         >
           {initial}
         </text>
