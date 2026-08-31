@@ -1,9 +1,26 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { getProductBySlug } from "@/data/products";
 import ProductDetailAddToCart from "@/components/ProductDetailAddToCart";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
+
+  if (!product) {
+    return {
+      title: "Producto no encontrado — Prime Essence",
+    };
+  }
+
+  return {
+    title: `${product.name} — Prime Essence`,
+    description: product.description,
+  };
 }
 
 export default async function ProductoDetailPage({ params }: PageProps) {
@@ -44,13 +61,13 @@ export default async function ProductoDetailPage({ params }: PageProps) {
             </p>
 
             <div className="mt-8 border-t border-neutral-200 pt-8">
-          <ProductDetailAddToCart
+              <ProductDetailAddToCart
                 productId={product.id}
                 slug={product.slug}
                 name={product.name}
                 brand={product.brand}
                 image={product.image}
-                category={product.category || "decants"}  // ← AGREGAR
+                category={product.category || "decants"}
                 variants={product.variants}
               />
             </div>

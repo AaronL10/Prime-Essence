@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
+import CartRow from "./CartRow";
 
 function formatPrice(price: number) {
   return `Gs. ${price.toLocaleString("es-AR")}`;

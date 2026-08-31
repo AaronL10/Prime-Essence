@@ -25,8 +25,10 @@ export default function ProductDetailAddToCart({
   name,
   brand,
   image,
+  category,      // ← AGREGAR ESTA LÍNEA
   variants,
 }: ProductDetailAddToCartProps) {
+
   const { addToCart } = useCart();
   const router = useRouter();
 
@@ -62,12 +64,13 @@ export default function ProductDetailAddToCart({
         sizeMl: selectedVariant.sizeMl,
         price: selectedVariant.price,
         stock: selectedVariant.stock,
-        category,  // ← AGREGAR
+        category,
       },
-
-
-      setAdded(true);
+      quantity
+    );
+    setAdded(true);
   }
+
 
   if (variants.length === 0) {
     return (

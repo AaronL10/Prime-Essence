@@ -202,7 +202,8 @@ export default async function CuentaPage() {
 
           <Link
             href="/productos"
-            className="mt-8 inline-block rounded-full bg-black px-6 py-3 font-body text-[13px] font-semibold uppercase tracking-[0.12em] text-white transition-all hover:bg-neutral-800"
+            className="mt-8 inline-blo
+            ck rounded-full bg-black px-6 py-3 font-body text-[13px] font-semibold uppercase tracking-[0.12em] text-white transition-all hover:bg-neutral-800"
           >
             Seguir comprando
           </Link>

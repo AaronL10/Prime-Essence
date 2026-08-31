@@ -6,13 +6,13 @@ export interface ProductVariant {
 }
 
 export interface Product {
-  [x: string]: any;
   id: string;
   slug: string;
   name: string;
   brand: string;
   description: string;
   image: string;
+  category?: string;   // ← AGREGAR ESTA LÍNEA
   variants: ProductVariant[];
 }
 

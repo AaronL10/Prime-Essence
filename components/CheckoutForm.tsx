@@ -15,7 +15,13 @@ interface CheckoutFormProps {
 }
 
 export default function CheckoutForm({ defaultName }: CheckoutFormProps) {
-  const { cart, cartTotal, clearCart } = useCart();
+  const {
+    cart,
+    cartTotal,
+    cartTotalWithDecantDiscount,
+    decantDiscount,
+    clearCart,
+  } = useCart();
   const router = useRouter();
 
   const [fullName, setFullName] = useState(defaultName);
@@ -153,11 +159,31 @@ export default function CheckoutForm({ defaultName }: CheckoutFormProps) {
           ))}
         </ul>
 
-        <div className="mt-5 border-t border-neutral-200 pt-5">
+        <div className="mt-5 space-y-2 border-t border-neutral-200 pt-5">
+          <div className="flex items-center justify-between">
+            <span className="font-body text-sm text-neutral-500">Subtotal</span>
+            <span className="font-mono text-base text-black">
+              {formatPrice(cartTotal)}
+            </span>
+          </div>
+
+          {decantDiscount.amount > 0 && (
+            <div className="flex items-center justify-between">
+              <span className="font-body text-sm text-neutral-500">
+                Descuento decants ({Math.round(decantDiscount.rate * 100)}%)
+              </span>
+              <span className="font-mono text-base text-black">
+                -{formatPrice(decantDiscount.amount)}
+              </span>
+            </div>
+          )}
+        </div>
+
+        <div className="mt-4 border-t border-neutral-200 pt-4">
           <div className="flex items-center justify-between">
             <span className="font-body text-base font-medium text-black">Total</span>
             <span className="font-mono text-2xl font-medium text-black">
-              {formatPrice(cartTotal)}
+              {formatPrice(cartTotalWithDecantDiscount)}
             </span>
           </div>
         </div>
