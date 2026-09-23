@@ -12,7 +12,7 @@ export interface Product {
   brand: string;
   description: string;
   image: string;
-  category?: string;   // ← AGREGAR ESTA LÍNEA
+  category?: string;
   variants: ProductVariant[];
 }
 

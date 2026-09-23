@@ -4,6 +4,33 @@ import type { Product, ProductVariant } from "@/lib/product-helpers";
 export type { Product, ProductVariant } from "@/lib/product-helpers";
 export { getStartingPrice, isAnyVariantInStock } from "@/lib/product-helpers";
 
+// ── Mapeo marca → categoría (no necesitás tocar Supabase) ──
+const BRAND_TO_CATEGORY: Record<string, string> = {
+  // Árabes
+  "Bharara": "arabes",
+  "Rasasi": "arabes",
+  "Armaf": "arabes",
+  "Afnan": "arabes",
+  "Lattafa": "arabes",
+  "French Avenue": "arabes",
+  "Maison Tropical": "arabes",
+  // Diseñador
+  "Valentino": "disenador",
+  "Giorgio Armani": "disenador",
+  "Dior": "disenador",
+  "Jean Paul Gaultier": "disenador",
+  // Artistas
+  "Shakira": "artistas",
+  "Sabrina Carpenter": "artistas",
+  // Nicho
+  "Xerjoff": "nicho",
+};
+
+function inferCategory(brand: string): string {
+  const normalized = brand.trim();
+  return BRAND_TO_CATEGORY[normalized] || "";
+}
+
 function mapVariants(rows: any[]): ProductVariant[] {
   return (rows ?? [])
     .map((v) => ({
@@ -37,6 +64,7 @@ export async function getProducts(): Promise<Product[]> {
     brand: row.brand,
     description: row.description ?? "",
     image: row.image ?? "",
+    category: inferCategory(row.brand),
     variants: mapVariants(row.product_variants),
   }));
 }
@@ -64,6 +92,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
     brand: data.brand,
     description: data.description ?? "",
     image: data.image ?? "",
+    category: inferCategory(data.brand),
     variants: mapVariants((data as any).product_variants),
   };
 }

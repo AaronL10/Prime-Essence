@@ -1,20 +1,14 @@
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
+import FormatGuide from "@/components/FormatGuide";
+import ConciergeExpress from "@/components/ConciergeExpress";
+import CollectorReviews from "@/components/CollectorReviews";
 import { getProducts } from "@/data/products";
 
 const STEPS = [
-  {
-    title: "Elegí",
-    text: "Seleccioná entre casas de nicho y clásicos de autor.",
-  },
-  {
-    title: "Fraccionamos",
-    text: "Extraemos tu fragancia del original a un vial de vidrio.",
-  },
-  {
-    title: "Recibís",
-    text: "Envío discreto en 24–48hs.",
-  },
+  { title: "Elegí", text: "Seleccioná entre casas de nicho y clásicos de autor." },
+  { title: "Fraccionamos", text: "Extraemos tu fragancia del original a un vial de vidrio." },
+  { title: "Recibís", text: "Envío discreto en 24–48hs." },
 ];
 
 export default async function Home() {
@@ -23,11 +17,9 @@ export default async function Home() {
 
   return (
     <main>
-      {/* HERO CON BANNER */}
+      {/* HERO */}
       <section className="relative border-b border-neutral-200">
         <div className="mx-auto grid max-w-7xl grid-cols-1 items-center lg:grid-cols-2">
-          
-          {/* Izquierda: Texto */}
           <div className="px-5 py-16 md:px-8 lg:py-24">
             <div className="max-w-lg">
               <p className="font-mono text-xs uppercase tracking-[0.25em] text-neutral-500">
@@ -37,7 +29,7 @@ export default async function Home() {
                 Perfumería de nicho, por mililitro.
               </h1>
               <p className="mt-5 font-body text-base leading-relaxed text-neutral-600">
-                Explorá casas de autor sin comprar el frasco completo. 
+                Explorá casas de autor sin comprar el frasco completo.
                 Decants desde 3ml, seleccionados y fraccionados a mano.
               </p>
               <div className="mt-8">
@@ -68,7 +60,6 @@ export default async function Home() {
             </div>
           </div>
 
-          {/* Derecha: Tu banner */}
           <div className="relative h-64 w-full bg-neutral-100 lg:h-full lg:min-h-[600px]">
             <img
               src="/banner.jpg"
@@ -115,6 +106,15 @@ export default async function Home() {
           )}
         </div>
       </section>
+
+      {/* GUIA DE FORMATOS */}
+      <FormatGuide />
+
+      {/* CONCIERGE OLFATIVO */}
+      <ConciergeExpress />
+
+      {/* RESEÑAS */}
+      <CollectorReviews />
 
       {/* CÓMO FUNCIONA */}
       <section className="border-b border-neutral-200 bg-neutral-50">
