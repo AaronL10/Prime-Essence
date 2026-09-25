@@ -6,7 +6,7 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-const SIZES = [3, 5, 10, 20];
+const SIZES = [2, 5, 10, 20];
 
 export default async function EditarProductoPage({ params }: PageProps) {
   const { id } = await params;

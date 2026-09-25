@@ -14,7 +14,7 @@ interface ProductFormProps {
   initialValues?: ProductFormInput;
 }
 
-const SIZES = [3, 5, 10, 20];
+const SIZES = [2, 5, 10, 20];
 
 const EMPTY_VALUES: ProductFormInput = {
   slug: "",
