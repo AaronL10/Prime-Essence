@@ -9,8 +9,8 @@ const NAV_LINKS = [
   { href: "/", label: "Inicio" },
   { href: "/productos", label: "Productos" },
   { href: "/canje", label: "Canje" },
-  { href: "/#nosotros", label: "Sobre nosotros" },
-  { href: "/#contacto", label: "Contacto" },
+  { href: "#nosotros", label: "Sobre nosotros" },  // ← sin el / inicial
+  { href: "#contacto", label: "Contacto" },        // ← sin el / inicial
 ];
 
 interface NavbarProps {
@@ -56,18 +56,23 @@ export default function Navbar({ user }: NavbarProps) {
             />
           </Link>
 
-          {/* Desktop nav */}
-          <nav className="hidden items-center gap-8 md:flex">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className="nav-link font-body text-[13px] font-medium uppercase tracking-[0.12em] text-neutral-500 transition-colors hover:text-black"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
+{/* Desktop nav */}
+<nav className="hidden items-center gap-8 md:flex">
+  {NAV_LINKS.map((link) => {
+    const isAnchor = link.href.startsWith("#");
+    const className = "nav-link font-body text-[13px] font-medium uppercase tracking-[0.12em] text-neutral-500 transition-colors hover:text-black";
+    
+    return isAnchor ? (
+      <a key={link.label} href={link.href} className={className}>
+        {link.label}
+      </a>
+    ) : (
+      <Link key={link.label} href={link.href} className={className}>
+        {link.label}
+      </Link>
+    );
+  })}
+</nav>
 
           {/* Right side */}
           <div className="flex items-center gap-3">
@@ -158,17 +163,33 @@ export default function Navbar({ user }: NavbarProps) {
             </button>
           </div>
 
-          <nav className="flex flex-col p-6">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                onClick={() => setOpen(false)}
-                className="nav-link border-b border-neutral-100 py-4 font-display text-xl text-black"
-              >
-                {link.label}
-              </Link>
-            ))}
+<nav className="flex flex-col p-6">
+  {NAV_LINKS.map((link) => {
+    // Si el link empieza con #, usamos <a>, si no, usamos <Link>
+    if (link.href.startsWith("#")) {
+      return (
+        <a
+          key={link.label}
+          href={link.href}
+          onClick={() => setOpen(false)}
+          className="nav-link border-b border-neutral-100 py-4 font-display text-xl text-black"
+        >
+          {link.label}
+        </a>
+      );
+    }
+    
+    return (
+      <Link
+        key={link.label}
+        href={link.href}
+        onClick={() => setOpen(false)}
+        className="nav-link border-b border-neutral-100 py-4 font-display text-xl text-black"
+      >
+        {link.label}
+      </Link>
+    );
+  })}
 
             {user && (
               <Link

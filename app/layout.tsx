@@ -33,7 +33,7 @@ const spaceMono = Space_Mono({
 export const metadata: Metadata = {
   title: "Prime Essence | Perfumes y decants",
   description:
-    "Compra perfumes originales fraccionados en decants desde 3ml. Probá tu próxima fragancia sin comprometer el frasco completo.",
+    "Compra perfumes originales fraccionados en decants desde 2ml. Probá tu próxima fragancia sin comprometer el frasco completo.",
 };
 
 export default async function RootLayout({

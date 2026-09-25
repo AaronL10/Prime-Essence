@@ -30,7 +30,7 @@ export default async function Home() {
               </h1>
               <p className="mt-5 font-body text-base leading-relaxed text-neutral-600">
                 Explorá casas de autor sin comprar el frasco completo.
-                Decants desde 3ml, seleccionados y fraccionados a mano.
+                Decants desde 2ml, seleccionados y fraccionados a mano.
               </p>
               <div className="mt-8">
                 <Link
@@ -43,12 +43,12 @@ export default async function Home() {
 
               <div className="mt-10 flex items-center gap-6 border-t border-neutral-200 pt-6">
                 <div>
-                  <p className="font-mono text-xl font-medium text-black">+40</p>
-                  <p className="mt-0.5 font-body text-[10px] uppercase tracking-wide text-neutral-400">Casas</p>
+                  <p className="font-mono text-xl font-medium text-black">+20</p>
+                  <p className="mt-0.5 font-body text-[10px] uppercase tracking-wide text-neutral-400">Perfumes</p>
                 </div>
                 <div className="h-6 w-px bg-neutral-200" />
                 <div>
-                  <p className="font-mono text-xl font-medium text-black">3ml</p>
+                  <p className="font-mono text-xl font-medium text-black">2ml</p>
                   <p className="mt-0.5 font-body text-[10px] uppercase tracking-wide text-neutral-400">Desde</p>
                 </div>
                 <div className="h-6 w-px bg-neutral-200" />

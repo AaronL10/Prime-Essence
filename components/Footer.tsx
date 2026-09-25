@@ -15,14 +15,14 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-neutral-200 bg-black text-white">
+   <footer id="nosotros" className="border-t border-neutral-200 bg-black text-white">
       <div className="mx-auto max-w-7xl px-5 py-16 md:px-8">
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 md:grid-cols-4 md:gap-8">
           {/* Logo + descripción */}
           <div>
             <img src="/favic.png" alt="Prime Essence" className="h-10 w-auto" />
             <p className="mt-4 max-w-[26ch] font-body text-sm leading-relaxed text-neutral-400">
-              Casas de nicho y clásicos de autor, fraccionados a mano en decants desde 3ml.
+              En Prime Essence seleccionamos perfumes de calidad y los ofrecemos en decants para que puedas probarlos, descubrir tus favoritos y encontrar tu fragancia ideal.
             </p>
           </div>
 
@@ -45,11 +45,11 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contacto */}
-          <div>
-            <h3 className="font-body text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">
-              Contacto
-            </h3>
+        {/* Contacto */}
+        <div id="contacto">
+          <h3 className="font-body text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">
+            Contacto
+          </h3>
             <ul className="mt-4 space-y-3 font-body text-sm text-neutral-300">
               <li>
                 <a href="mailto:hola@primeessence.com" className="transition-colors hover:text-white">
@@ -61,9 +61,10 @@ export default function Footer() {
                   +595 21 000 000
                 </a>
               </li>
-              <li className="text-neutral-500">Asunción, Paraguay</li>
+              <li className="text-neutral-500">Encarnacion, Paraguay</li>
             </ul>
-          </div>
+        </div>
+
 
           {/* Redes */}
           <div>
@@ -81,14 +82,18 @@ export default function Footer() {
                 <WhatsAppIcon />
               </a>
               <a
-                href="#"
+                href="https://www.instagram.com/prime_essence_py/"
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label="Instagram"
                 className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-700 text-neutral-300 transition-all hover:border-white hover:text-white"
               >
                 <InstagramIcon />
               </a>
               <a
-                href="#"
+                href="https://www.tiktok.com/@prime_essence_py"
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label="TikTok"
                 className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-700 text-neutral-300 transition-all hover:border-white hover:text-white"
               >
@@ -142,3 +147,4 @@ function TikTokIcon() {
     </svg>
   );
 }
+

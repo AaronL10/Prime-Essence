@@ -16,7 +16,7 @@ export default async function ProductosPage() {
           </h1>
           <p className="mt-4 max-w-[52ch] font-body text-sm leading-relaxed text-neutral-500 sm:text-base">
             {products.length} fragancias disponibles, todas fraccionables
-            en decants desde 3ml. Explorá por categoría o buscá la tuya.
+            en decants desde 2ml. Explorá por categoría o buscá la tuya.
           </p>
         </div>
       </section>
