@@ -1,143 +1,133 @@
-"use client";
-
+import { redirect } from "next/navigation";
 import Link from "next/link";
-import { useState } from "react";
-import {
-  getStartingPrice,
-  isAnyVariantInStock,
-  type ProductVariant,
-} from "@/lib/product-helpers";
+import { createClient } from "@/lib/supabase/server";
+import { formatPoints, GS_PER_POINT } from "@/lib/points";
+import RedeemPointsPanel from "@/components/RedeemPointsPanel";
 
-function formatPrice(price: number) {
-  return `Gs. ${price.toLocaleString("es-AR")}`;
-}
+export const metadata = {
+  title: "Mi cuenta | Prime Essence",
+};
 
-interface ProductCardProps {
-  slug: string;
-  name: string;
-  brand: string;
-  description: string;
-  image: string;
-  variants: ProductVariant[];
-}
+export default async function CuentaPage() {
+  const supabase = await createClient();
 
-export default function ProductCard({
-  slug,
-  name,
-  brand,
-  description,
-  image,
-  variants,
-}: ProductCardProps) {
-  const [imgFailed, setImgFailed] = useState(false);
-  
-  // Safe variants (evita undefined)
-  const safeVariants = variants ?? [];
-  
-  // Cálculos
-  const inStock = isAnyVariantInStock(safeVariants);
-  const startingPrice = getStartingPrice(safeVariants);
-  
-  // Ordenar variantes por tamaño y crear string de tamaños disponibles
-  const availableSizes = safeVariants
-    .sort((a, b) => a.sizeMl - b.sizeMl)
-    .map((v) => `${v.sizeMl}ml`)
-    .join(" · ");
+  // 1. Usuario logueado (si no, al login)
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  // 2. Perfil con puntos
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("points, full_name")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const points = profile?.points ?? 0;
+  const displayName =
+    profile?.full_name ??
+    (user.user_metadata?.full_name as string | undefined) ??
+    (user.user_metadata?.name as string | undefined) ??
+    user.email?.split("@")[0] ??
+    "";
+
+  // 3. Descuento activo (canje existente sin usar)
+  const { data: activeRedemption } = await supabase
+    .from("redemptions")
+    .select("id, points_used, discount_percent")
+    .eq("user_id", user.id)
+    .eq("status", "active")
+    .maybeSingle();
+
+  // 4. Historial de movimientos (opcional, si tenés la tabla points_ledger)
+  const { data: ledger } = await supabase
+    .from("points_ledger")
+    .select("id, points, reason, created_at")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false })
+    .limit(20);
 
   return (
-    <Link
-      href={`/productos/${slug}`}
-      className="group flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white transition-all duration-300 hover:border-black hover:shadow-lg"
-    >
-      {/* Imagen */}
-      <div className="relative aspect-[4/5] overflow-hidden bg-neutral-100">
-        {image && !imgFailed ? (
-          <img
-            src={image}
-            alt={`${brand} — ${name}`}
-            loading="lazy"
-            onError={() => setImgFailed(true)}
-            className="h-full w-full object-contain p-4 transition-transform duration-700 group-hover:scale-105"
-          />
-        ) : (
-          <BottlePlaceholder initial={brand.charAt(0)} />
-        )}
+    <main className="mx-auto min-h-screen max-w-3xl px-5 pb-24 pt-28 md:px-8">
+      {/* Saludo */}
+      <p className="font-body text-xs uppercase tracking-[0.2em] text-neutral-400">
+        Mi cuenta
+      </p>
+      <h1 className="mt-2 font-display text-4xl text-black">
+        Hola, {displayName}
+      </h1>
+      <p className="mt-1 font-body text-sm text-neutral-500">{user.email}</p>
 
-        {/* Badge stock */}
-        <span
-          className={`absolute left-3 top-3 rounded-full px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-widest ${
-            inStock
-              ? "bg-black text-white"
-              : "border border-neutral-300 bg-white text-neutral-400"
-          }`}
-        >
-          {inStock ? "En stock" : "Agotado"}
-        </span>
-      </div>
-
-      {/* Info */}
-      <div className="flex flex-1 flex-col gap-2 p-4">
-        <div>
-          <p className="font-body text-[11px] font-semibold uppercase tracking-[0.16em] text-neutral-400">
-            {brand}
-          </p>
-          <h3 className="mt-0.5 font-display text-lg leading-tight text-black">
-            {name}
-          </h3>
-        </div>
-
-        <p className="line-clamp-2 flex-1 font-body text-sm leading-relaxed text-neutral-500">
-          {description}
+      {/* Tarjeta de puntos */}
+      <div className="mt-10 rounded-2xl border border-neutral-200 bg-black p-8 text-white">
+        <p className="font-body text-xs uppercase tracking-[0.2em] text-white/60">
+          Tus puntos
         </p>
-
-        {/* Mostrar tamaños disponibles */}
-        {availableSizes && (
-          <p className="font-mono text-[11px] text-neutral-400">
-            {availableSizes}
-          </p>
-        )}
-
-        <div className="flex items-baseline justify-between gap-3 pt-2">
-          <span className="font-body text-xs text-neutral-400">Desde</span>
-          <span className="font-mono text-base font-medium text-black">
-            {formatPrice(startingPrice)}
-          </span>
-        </div>
-
-        <span className="mt-2 w-full rounded-full border border-neutral-200 py-2.5 text-center font-body text-[12px] font-semibold uppercase tracking-[0.1em] text-black transition-all duration-300 group-hover:bg-black group-hover:text-white">
-          Ver opciones
-        </span>
-      </div>
-    </Link>
-  );
-}
-
-function BottlePlaceholder({ initial }: { initial: string }) {
-  return (
-    <div className="flex h-full w-full items-center justify-center bg-neutral-100">
-      <svg width="64" height="96" viewBox="0 0 64 96" fill="none">
-        <rect x="20" y="4" width="24" height="12" rx="2" fill="#000000" opacity="0.15" />
-        <rect x="16" y="16" width="32" height="8" rx="2" fill="#000000" opacity="0.1" />
-        <path
-          d="M12 28c0-1.5 1.5-3 3-3h34c1.5 0 3 1.5 3 3v56a8 8 0 0 1-8 8H20a8 8 0 0 1-8-8V28Z"
-          fill="#000000"
-          opacity="0.06"
-          stroke="#000000"
-          strokeWidth="1"
-        />
-        <text
-          x="32"
-          y="68"
-          textAnchor="middle"
-          fontFamily="var(--font-fraunces), serif"
-          fontStyle="italic"
-          fontSize="20"
-          fill="#000000"
-          opacity="0.25"
+        <p className="mt-3 font-mono text-6xl font-medium">
+          {formatPoints(points)}
+        </p>
+        <p className="mt-3 font-body text-sm text-white/60">
+          = Gs. {(points * GS_PER_POINT).toLocaleString("es-AR")} en valor
+        </p>
+        <Link
+          href="/productos"
+          className="mt-6 inline-block rounded-full bg-white px-6 py-2.5 font-body text-[12px] font-semibold uppercase tracking-[0.12em] text-black transition-colors hover:bg-amber"
         >
-          {initial}
-        </text>
-      </svg>
-    </div>
+          Seguir comprando
+        </Link>
+      </div>
+
+      {/* Panel de canje (usa tu actions.ts y RPC redeem_points) */}
+      <RedeemPointsPanel
+        balance={points}
+        activeRedemption={activeRedemption ?? null}
+      />
+
+      {/* Historial (solo si existe la tabla points_ledger) */}
+      {ledger && ledger.length > 0 && (
+        <div className="mt-10">
+          <h2 className="font-display text-2xl text-black">Movimientos</h2>
+          <ul className="mt-4 divide-y divide-neutral-200 rounded-2xl border border-neutral-200 bg-white">
+            {ledger.map((entry) => (
+              <li
+                key={entry.id}
+                className="flex items-center justify-between px-5 py-4"
+              >
+                <div>
+                  <p className="font-body text-sm text-black">
+                    {entry.reason ?? "Movimiento de puntos"}
+                  </p>
+                  <p className="font-mono text-[11px] text-neutral-400">
+                    {new Date(entry.created_at).toLocaleDateString("es-AR")}
+                  </p>
+                </div>
+                <span
+                  className={`font-mono text-sm font-medium ${
+                    entry.points >= 0 ? "text-green-700" : "text-wine"
+                  }`}
+                >
+                  {entry.points >= 0 ? "+" : ""}
+                  {formatPoints(entry.points)} pts
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Cerrar sesión */}
+      <form action="/auth/logout" method="post" className="mt-12">
+        <button
+          type="submit"
+          className="rounded-full border border-neutral-200 px-6 py-2.5 font-body text-[12px] font-semibold uppercase tracking-[0.12em] text-black transition-all hover:bg-black hover:text-white"
+        >
+          Cerrar sesión
+        </button>
+      </form>
+    </main>
   );
 }

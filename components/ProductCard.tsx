@@ -30,8 +30,19 @@ export default function ProductCard({
   variants,
 }: ProductCardProps) {
   const [imgFailed, setImgFailed] = useState(false);
-  const inStock = isAnyVariantInStock(variants);
-  const startingPrice = getStartingPrice(variants);
+  
+  // Safe variants (evita undefined)
+  const safeVariants = variants ?? [];
+  
+  // Cálculos
+  const inStock = isAnyVariantInStock(safeVariants);
+  const startingPrice = getStartingPrice(safeVariants);
+  
+  // Ordenar variantes por tamaño y crear string de tamaños disponibles
+  const availableSizes = safeVariants
+    .sort((a, b) => a.sizeMl - b.sizeMl)
+    .map((v) => `${v.sizeMl}ml`)
+    .join(" · ");
 
   return (
     <Link
@@ -49,7 +60,7 @@ export default function ProductCard({
             className="h-full w-full object-contain p-4 transition-transform duration-700 group-hover:scale-105"
           />
         ) : (
-          <BottlePlaceholder initial={brand.charAt(0)} />
+          <BottlePlaceholder initial={brand?.charAt(0) ?? "P"} />
         )}
 
         {/* Badge stock */}
@@ -78,6 +89,13 @@ export default function ProductCard({
         <p className="line-clamp-2 flex-1 font-body text-sm leading-relaxed text-neutral-500">
           {description}
         </p>
+
+        {/* Mostrar tamaños disponibles */}
+        {availableSizes && (
+          <p className="font-mono text-[11px] text-neutral-400">
+            {availableSizes}
+          </p>
+        )}
 
         <div className="flex items-baseline justify-between gap-3 pt-2">
           <span className="font-body text-xs text-neutral-400">Desde</span>
