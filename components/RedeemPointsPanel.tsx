@@ -67,7 +67,7 @@ export default function RedeemPointsPanel({
 
       {validOptions.length === 0 ? (
         <p className="mt-3 font-body text-sm text-ink/60">
-          Necesitás al menos 100 pts para canjear tu primer descuento.
+          Necesitás al menos 250 pts para canjear tu primer descuento.
         </p>
       ) : (
         <>
