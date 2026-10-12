@@ -52,13 +52,13 @@ export default function Footer() {
           </h3>
             <ul className="mt-4 space-y-3 font-body text-sm text-neutral-300">
               <li>
-                <a href="mailto:hola@primeessence.com" className="transition-colors hover:text-white">
-                  hola@primeessence.com
+                <a href="mailto:jbritezpacheco29@gmail.com" className="transition-colors hover:text-white">
+                  jbritezpacheco29@gmail.com
                 </a>
               </li>
               <li>
-                <a href="tel:+595210000000" className="transition-colors hover:text-white">
-                  +595 21 000 000
+                <a href="tel:+595983875287" className="transition-colors hover:text-white">
+                  +595 983 875287
                 </a>
               </li>
               <li className="text-neutral-500">Encarnacion, Paraguay</li>
@@ -73,7 +73,7 @@ export default function Footer() {
             </h3>
             <div className="mt-4 flex items-center gap-3">
               <a
-                href="https://wa.me/595210000000"
+                href="https://wa.me/595983875287"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"

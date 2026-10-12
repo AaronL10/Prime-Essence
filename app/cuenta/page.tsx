@@ -30,11 +30,16 @@ export default function ProductCard({
   variants,
 }: ProductCardProps) {
   const [imgFailed, setImgFailed] = useState(false);
-  const inStock = isAnyVariantInStock(variants);
-  const startingPrice = getStartingPrice(variants);
+  
+  // Safe variants (evita undefined)
+  const safeVariants = variants ?? [];
+  
+  // Cálculos
+  const inStock = isAnyVariantInStock(safeVariants);
+  const startingPrice = getStartingPrice(safeVariants);
   
   // Ordenar variantes por tamaño y crear string de tamaños disponibles
-  const availableSizes = variants
+  const availableSizes = safeVariants
     .sort((a, b) => a.sizeMl - b.sizeMl)
     .map((v) => `${v.sizeMl}ml`)
     .join(" · ");
@@ -85,7 +90,7 @@ export default function ProductCard({
           {description}
         </p>
 
-        {/* NUEVO: Mostrar tamaños disponibles */}
+        {/* Mostrar tamaños disponibles */}
         {availableSizes && (
           <p className="font-mono text-[11px] text-neutral-400">
             {availableSizes}

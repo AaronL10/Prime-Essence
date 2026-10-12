@@ -1,6 +1,5 @@
 // Número del negocio en formato internacional, sin "+" y sin espacios.
-// Convertido desde 0971 546446 (formato local PY) → 595 971 546446
-const WHATSAPP_NUMBER = "595971546446";
+const WHATSAPP_NUMBER = "595983875287";
 
 function formatPrice(price: number): string {
   return `$${price.toLocaleString("es-AR")}`;
