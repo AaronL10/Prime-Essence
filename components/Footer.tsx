@@ -91,7 +91,7 @@ export default function Footer() {
                 <InstagramIcon />
               </a>
               <a
-                href="https://www.tiktok.com/@prime_essence_py"
+                href="https://www.tiktok.com/@primeessencee"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="TikTok"
