@@ -31,9 +31,6 @@ export async function createOrder(
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    return { error: "Debés iniciar sesión para completar el pedido." };
-  }
 
   const variantIds = items.map((item) => item.variantId);
 
@@ -96,7 +93,7 @@ export async function createOrder(
   const { data: order, error: orderError } = await supabase
     .from("orders")
     .insert({
-      user_id: user.id,
+      user_id: user?.id ?? null,
       full_name: formData.fullName,
       phone: formData.phone,
       address: formData.address,

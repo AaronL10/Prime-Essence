@@ -19,9 +19,7 @@ export default async function PedidoPage({ params }: PageProps) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect(`/login?redirect=/pedido/${id}`);
-  }
+
 
   const { data: order, error: orderError } = await supabase
     .from("orders")

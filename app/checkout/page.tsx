@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+
 import { createClient } from "@/lib/supabase/server";
 import CheckoutForm from "@/components/CheckoutForm";
 
@@ -9,15 +9,11 @@ export default async function CheckoutPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login?redirect=/checkout");
-  }
-
   const defaultName =
-    (user.user_metadata?.full_name as string | undefined) ??
-    (user.user_metadata?.name as string | undefined) ??
+    (user?.user_metadata?.full_name as string | undefined) ??
+    (user?.user_metadata?.name as string | undefined) ??
     "";
-
+    
   return (
     <main>
       <section className="border-b border-neutral-200">
